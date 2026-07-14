@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Zapply",
+    "slug": "zapply-frontend",
+    "scheme": "zapply",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-router",
+      "expo-status-bar"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {},
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    }
+  }
+}
