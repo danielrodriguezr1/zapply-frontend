@@ -145,7 +145,7 @@ export default function Plataformas() {
               <Pressable style={styles.platformCard} onPress={() => toggle(item.id)}>
                 <View style={[styles.logoWrap, selected && styles.logoWrapSelected]}>
                   {uri ? (
-                    <Image source={{ uri }} style={styles.logo} />
+                    <Image source={{ uri }} style={styles.logo} resizeMode="cover" />
                   ) : (
                     <View style={[styles.logo, styles.center]} />
                   )}

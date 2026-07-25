@@ -154,29 +154,55 @@ export function platformLogoUrl(path: string | null): string | undefined {
   return path ? `https://image.tmdb.org/t/p/w154${path}` : undefined;
 }
 
-export type TmdbTitle = {
-  id: number;
-  title?: string; // peliculas
-  name?: string; // series
-  overview?: string;
-  poster_path?: string;
-  vote_average?: number;
-  media_type?: string;
+export type QuickFilter = "top_rated" | "trending" | "new_releases";
+
+export type DiscoverParams = {
+  mediaType: "movie" | "tv";
+  genres?: number[];
+  excludeGenres?: number[];
+  yearMin?: number;
+  yearMax?: number;
+  runtimeMin?: number;
+  runtimeMax?: number;
+  ratingMin?: number;
+  sortBy?: "rating" | "votes";
+  quickFilter?: QuickFilter;
+  platforms?: number[];
+  page?: number;
 };
 
-export type TmdbPage = {
+export type DiscoverItem = {
+  id: number;
+  title: string;
+  overview: string | null;
+  poster_path: string | null;
+  vote_average: number | null;
+  media_type: string;
+  release_date: string | null;
+  in_watchlist: boolean;
+  my_rating: number | null;
+};
+
+export type DiscoverPage = {
   page: number;
-  results: TmdbTitle[];
+  results: DiscoverItem[];
   total_pages: number;
   total_results: number;
 };
 
-export async function getTrending(): Promise<TmdbPage> {
-  const res = await fetch(`${API_V1}/trending`);
-  if (!res.ok) {
-    throw new Error(`El backend respondio ${res.status}`);
-  }
-  return res.json();
+export function getDiscover(params: DiscoverParams): Promise<DiscoverPage> {
+  const query = new URLSearchParams({ mediaType: params.mediaType, page: String(params.page ?? 1) });
+  if (params.genres?.length) query.set("genres", params.genres.join(","));
+  if (params.excludeGenres?.length) query.set("excludeGenres", params.excludeGenres.join(","));
+  if (params.yearMin != null) query.set("yearMin", String(params.yearMin));
+  if (params.yearMax != null) query.set("yearMax", String(params.yearMax));
+  if (params.runtimeMin != null) query.set("runtimeMin", String(params.runtimeMin));
+  if (params.runtimeMax != null) query.set("runtimeMax", String(params.runtimeMax));
+  if (params.ratingMin != null) query.set("ratingMin", String(params.ratingMin));
+  if (params.sortBy) query.set("sortBy", params.sortBy);
+  if (params.quickFilter) query.set("quickFilter", params.quickFilter);
+  if (params.platforms?.length) query.set("platforms", params.platforms.join(","));
+  return apiFetchJson<DiscoverPage>(`/discover?${query.toString()}`);
 }
 
 // URL base de las imagenes de TMDB (los posters vienen como rutas relativas).
